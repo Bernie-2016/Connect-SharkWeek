@@ -1,4 +1,4 @@
-SRC_DIRS = models
+SRC_DIRS = .
 
 requirements:
 	pip install -r requirements.txt
@@ -8,6 +8,7 @@ develop: requirements
 
 quality:
 	pep8 $(SRC_DIRS)
-# 	TODO: pylint is failing due to broken code in master.
-# 	Re-enable once the app works.
-#	pylint $(SRC_DIRS)
+	pylint $(SRC_DIRS)
+
+test:
+	py.test

@@ -6,6 +6,7 @@ install:
   - make develop
 script:
   - make quality
+  - make test
 branches:
     only:
       - master

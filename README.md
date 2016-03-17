@@ -23,6 +23,19 @@ Test code quality:
 make quality
 ```
 
+Run tests:
+```bash
+make test
+```
+
+To set up the DB for local development:
+```sh
+$ python manage.py create_db
+$ python manage.py db init
+$ python manage.py db migrate
+$ python manage.py create_data
+```
+
 ## Production
 App configuration is currently defined in the `/opt/bernie/config.yml`
 file, which shares the same config settings as

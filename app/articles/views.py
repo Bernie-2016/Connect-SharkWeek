@@ -66,9 +66,9 @@ class CreateListArticles(Resource):
             resp.status_code = 403
             return resp
 
-        except SQLAlchemyError as e:
+        except SQLAlchemyError as err:
             db.session.rollback()
-            resp = jsonify({"error": str(e)})
+            resp = jsonify({"error": str(err)})
             resp.status_code = 403
             return resp
 

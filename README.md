@@ -23,6 +23,11 @@ Test code quality:
 make quality
 ```
 
+Run tests:
+```bash
+make test
+```
+
 To set up the DB for local development:
 ```sh
 $ python manage.py create_db

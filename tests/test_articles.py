@@ -1,12 +1,9 @@
-import unittest
 import json
+from app.articles.models import Articles
 
-from tests.base import BaseTestCase
-
-add_data = """{
+data = """{
   "data": {
     "attributes":
-
     {"lang": "foo",
     "image_url": "foo",
     "url": "foo",
@@ -23,51 +20,24 @@ add_data = """{
   }
 }"""
 
-update_data = """{
-  "data": {
-    "attributes":
 
-        {"lang": "bar",
-        "image_url": "bar",
-        "url": "bar",
-        "article_id": "bar",
-        "article_type": "bar",
-        "excerpt": "bar",
-        "status": 35678,
-        "title": "bar",
-        "body": "bar",
-        "site": "bar",
-        "body_markdown": "bar",
-        "article_category": "bar"},
-        "type": "articles"
-  }
-}"""
+class TestArticles(object):
 
+    def test_01_create(self, client):
+        response = client.post('/api/v1/articles.json', data=data, content_type="application/json")
+        assert response.status_code == 201
 
-class TestArticles(BaseTestCase):
-
-    def setUp(self):
-        super(TestArticles, self).setUp()
-
-    def test_01_add(self):
-        rv = self.client.post('/api/v1/articles.json', data=add_data, content_type="application/json")
-        assert rv.status_code == 201
-
-    def test_02_read_update(self):
-        self.client.post('/api/v1/articles.json', data=add_data, content_type="application/json")
-        request = self.client.get('/api/v1/articles.json')
+    def test_02_read_update(self, client, article):
+        article.add(article)
+        request = client.get('/api/v1/articles.json')
         dict = json.loads(request.data.decode('utf-8'))
         id = dict['data'][0]['id']
-        rv = self.client.patch('/api/v1/articles/{}.json'.format(id), data=update_data, content_type="application/json")
-        assert rv.status_code == 200
+        response = client.patch('/api/v1/articles/{}.json'.format(id), data=data, content_type="application/json")
+        assert response.status_code == 200
 
-    def test_03_delete(self):
-        self.client.post('/api/v1/articles.json', data=add_data, content_type="application/json")
-        request = self.client.get('/api/v1/articles.json')
-        dict = json.loads(request.data.decode('utf-8'))
-        id = dict['data'][0]['id']
-        rv = self.client.delete('/api/v1/articles/{}.json'.format(id))
-        assert rv.status_code == 204
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_03_delete(self, client, article):
+        article.add(article)
+        articles = Articles.query.all()
+        id = articles[0].id
+        response = client.delete('/api/v1/articles/{}.json'.format(id))
+        assert response.status_code == 204

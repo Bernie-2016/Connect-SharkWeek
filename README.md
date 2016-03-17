@@ -7,9 +7,11 @@ Make sure you have the following installed:
 * postgresql 9.4
 * python 3.4
 
-It's also recommended that you use `virtualenv`, `virtualenvwrapper`,
-or a similar tool to keep your development environment isolated from
-the rest of your system.
+It's also recommended that you use
+[`virtualenv`](https://virtualenv.pypa.io/en/latest/),
+(`virtualenvwrapper`)[http://virtualenvwrapper.readthedocs.org], or a
+similar tool to keep your development environment isolated from the
+rest of your system.
 
 Install all requirements:
 ```bash

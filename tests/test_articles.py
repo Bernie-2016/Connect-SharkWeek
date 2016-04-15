@@ -1,43 +1,50 @@
 import json
-from app.articles.models import Articles
 
-data = """{
-  "data": {
-    "attributes":
-    {"lang": "foo",
-    "image_url": "foo",
-    "url": "foo",
-    "article_id": "foo",
-    "article_type": "foo",
-    "excerpt": "foo",
-    "status": 35678,
-    "title": "foo",
-    "body": "foo",
-    "site": "foo",
-    "body_markdown": "foo",
-    "article_category": "foo"},
-    "type": "articles"
-  }
-}"""
+EXPECTED_KEYS = ['title', 'body_markdown', 'excerpt', 'timestamp_publish', 'url', 'image_url']
 
 
 class TestArticles(object):
 
-    def test_01_create(self, client):
-        response = client.post('/api/v1/articles.json', data=data, content_type="application/json")
-        assert response.status_code == 201
-
-    def test_02_read_update(self, client, article):
-        article.add(article)
+    def test_article_type_filter(self, client, foo_article):
+        """
+        Verify that articles are filtered to include only those
+        with an article_type of PressRelease OR DemocracyDaily.
+        """
+        foo_article.add(foo_article)
         request = client.get('/api/v1/articles.json')
+        assert request.status_code == 200
         dict = json.loads(request.data.decode('utf-8'))
-        id = dict['data'][0]['id']
-        response = client.patch('/api/v1/articles/{}.json'.format(id), data=data, content_type="application/json")
-        assert response.status_code == 200
+        data = dict.get('data')
+        assert len(data) == 0
 
-    def test_03_delete(self, client, article):
-        article.add(article)
-        articles = Articles.query.all()
-        id = articles[0].id
-        response = client.delete('/api/v1/articles/{}.json'.format(id))
-        assert response.status_code == 204
+    def test_get_articles(self, client, dd_article):
+        """Verify getting all articles."""
+        dd_article.add(dd_article)
+        request = client.get('/api/v1/articles.json')
+        assert request.status_code == 200
+        dict = json.loads(request.data.decode('utf-8'))
+        data = dict.get('data')
+        assert len(data) == 1
+        article = data[0]
+        assert article.get('type') == 'article'
+        attributes = article.get('attributes')
+        assert attributes.get('title') == 'I Endorse Bernie Sanders for President'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
+
+    def test_get_single_article(self, client, dd_article):
+        """Verify getting an article by ID."""
+        dd_article.add(dd_article)
+        request = client.get('/api/v1/articles/1.json')
+        assert request.status_code == 200
+        dict = json.loads(request.data.decode('utf-8'))
+        article = dict.get('data')
+        assert article.get('type') == 'article'
+        attributes = article.get('attributes')
+        assert attributes.get('title') == 'I Endorse Bernie Sanders for President'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
+
+    def test_get_nonexistent_article(self, client, dd_article):
+        """Verify trying to get an article by ID that doesn't exist returns a 404."""
+        dd_article.add(dd_article)
+        request = client.get('/api/v1/articles/99.json')
+        assert request.status_code == 404

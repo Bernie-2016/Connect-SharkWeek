@@ -1,9 +1,8 @@
 from marshmallow_jsonapi import Schema, fields
-from marshmallow import validate
 from app.basemodels import db, CRUD_MixIn
 
 
-class Videos(db.Model, CRUD_MixIn):
+class Video(db.Model, CRUD_MixIn):
     id = db.Column(db.Integer, primary_key=True)
 
     status = db.Column(db.Integer, nullable=False)
@@ -30,21 +29,20 @@ class Videos(db.Model, CRUD_MixIn):
         self.description_snippet = description_snippet
 
 
-class VideosSchema(Schema):
+class VideoSchema(Schema):
 
-    not_blank = validate.Length(min=1, error='Field cannot be blank')
-    # add validate=not_blank in required fields
     # id = fields.Integer(dump_only=True)
     id = fields.UUID(dump_only=True)
 
     status = fields.Integer(required=True)
-    video_id = fields.String(validate=not_blank)
-    url = fields.Url(validate=not_blank)
-    site = fields.String(validate=not_blank)
-    title = fields.String(validate=not_blank)
-    description = fields.String(validate=not_blank)
-    thumbnail_url = fields.Url(validate=not_blank)
-    description_snippet = fields.String(validate=not_blank)
+    video_id = fields.String()
+    timestamp_publish = fields.DateTime("%Y-%m-%dT%H:%M:%S+00:00")
+    url = fields.Url()
+    site = fields.String()
+    title = fields.String()
+    description = fields.String()
+    thumbnail_url = fields.Url()
+    description_snippet = fields.String()
 
     # self links
     def get_top_level_links(self, data, many):
@@ -55,5 +53,4 @@ class VideosSchema(Schema):
         return {'self': self_link}
 
     class Meta:
-        type_ = 'videos'
-        strict = True
+        type_ = 'video'

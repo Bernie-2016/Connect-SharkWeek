@@ -1,39 +1,40 @@
 import json
-from app.videos.models import Videos
 
-data = """{
-  "data": {
-    "attributes":
-    {"site": "foo",
-     "url": "http://www.example.com",
-     "description": "foo",
-     "thumbnail_url": "http://www.example.com",
-     "status": 35678,
-     "title": "foo",
-     "description_snippet": "foo",
-     "video_id": "foo"},
-    "type": "videos"
-  }
- }"""
+EXPECTED_KEYS = ['title', 'video_id', 'description', 'timestamp_publish', 'thumbnail_url']
 
 
 class TestVideos(object):
 
-    def test_01_create(self, client):
-        response = client.post('/api/v1/videos.json', data=data, content_type="application/json")
-        assert response.status_code == 201
-
-    def test_02_read_update(self, client, video):
+    def test_get_videos(self, client, video):
+        """Verify getting all videos. """
         video.add(video)
         request = client.get('/api/v1/videos.json')
+        assert request.status_code == 200
         dict = json.loads(request.data.decode('utf-8'))
-        id = dict['data'][0]['id']
-        response = client.patch('/api/v1/videos/{}.json'.format(id), data=data, content_type="application/json")
-        assert response.status_code == 200
+        data = dict.get('data')
+        assert len(data) == 1
+        video = data[0]
+        assert video.get('type') == 'video'
+        attributes = video.get('attributes')
+        assert attributes.get('title') == 'Expand Social Security'
+        assert attributes.get('timestamp_publish') == '2016-01-13T19:08:43+00:00'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
 
-    def test_03_delete(self, client, video):
+    def test_get_single_video(self, client, video):
+        """Verify getting a video item by ID."""
         video.add(video)
-        videos = Videos.query.all()
-        id = videos[0].id
-        response = client.delete('/api/v1/videos/{}.json'.format(id))
-        assert response.status_code == 204
+        request = client.get('/api/v1/videos/1.json')
+        assert request.status_code == 200
+        dict = json.loads(request.data.decode('utf-8'))
+        video = dict.get('data')
+        assert video.get('type') == 'video'
+        attributes = video.get('attributes')
+        assert attributes.get('title') == 'Expand Social Security'
+        assert attributes.get('timestamp_publish') == '2016-01-13T19:08:43+00:00'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
+
+    def test_get_nonexistent_video(self, client, video):
+        """Verify trying to get a video item by ID that doesn't exist returns a 404."""
+        video.add(video)
+        request = client.get('/api/v1/videos/99.json')
+        assert request.status_code == 404

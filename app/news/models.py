@@ -1,5 +1,4 @@
 from marshmallow_jsonapi import Schema, fields
-from marshmallow import validate, pre_dump
 from app.basemodels import db, CRUD_MixIn
 
 
@@ -40,25 +39,22 @@ class News(db.Model, CRUD_MixIn):
 
 class NewsSchema(Schema):
 
-    not_blank = validate.Length(min=1, error='Field cannot be blank')
-    # add validate=not_blank in required fields
     # id = fields.Integer(dump_only=True)
     id = fields.UUID(dump_only=True)
 
-    title = fields.String(validate=not_blank)
-    body_markdown = fields.String(validate=not_blank)
-    excerpt = fields.String(validate=not_blank)
+    status = fields.Integer()
+    news_id = fields.String()
     timestamp_publish = fields.DateTime("%Y-%m-%dT%H:%M:%S+00:00")
-    url = fields.Url(validate=not_blank)
-    image_url = fields.String(validate=not_blank)
-    lang = fields.String(validate=not_blank)
-
-    # status = fields.Integer(required=True)
-    # news_id = fields.String(validate=not_blank)
-    # news_type = fields.String(validate=not_blank)
-    # site = fields.String(validate=not_blank)
-    # news_category = fields.String(validate=not_blank)
-    # body = fields.String(validate=not_blank)
+    title = fields.String()
+    news_type = fields.String()
+    site = fields.String()
+    lang = fields.String()
+    excerpt = fields.String()
+    news_category = fields.String()
+    url = fields.Url()
+    image_url = fields.String()
+    body = fields.String()
+    body_markdown = fields.String()
 
     # self links
     def get_top_level_links(self, data, many):
@@ -67,12 +63,6 @@ class NewsSchema(Schema):
         else:
             self_link = "/news/{}".format(data['id'])
         return {'self': self_link}
-
-    @pre_dump
-    def empty_image_url_to_none(self, data):
-        if not data.image_url:
-            data.image_url = None
-        return data
 
     class Meta:
         type_ = 'news'

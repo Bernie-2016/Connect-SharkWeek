@@ -6,9 +6,9 @@ Public API for [Sharknado](https://github.com/Bernie-2016/Connect-Sharknado) usi
 ## Development
 Make sure you have the following installed:
 * postgresql 9.4
-* python 3.4
+* python 3.5.1
 
-It's also recommended that you use
+We recommended that you use
 [`virtualenv`](https://virtualenv.pypa.io/en/latest/),
 [`virtualenvwrapper`](http://virtualenvwrapper.readthedocs.org), or a
 similar tool to keep your development environment isolated from the
@@ -38,24 +38,70 @@ $ python manage.py create_data
 ```
 
 To start the app in local development mode:
-```sh
-$ python ./runserver.py
+```bash
+make run
 ```
 
-## Production
-App configuration is currently defined in the `/opt/bernie/config.yml`
-file, which shares the same config settings as
-[Sharknado](https://github.com/Bernie-2016/Connect-Sharknado).
+## Application Configuration
+Application configuration is handled by the OS environment variable SHARK_APP_SETTINGS.
+Set this to one of the classes in app/config.py. For example:
 
-### Sample config
-```yaml
-postgresql:
-    dbname: __postgres__
-    dbuser: __user__
-    dbpass: __pass__
-    host: __host__
-    port: 5432
+For local development mode (this is the default):
+SHARK_APP_SETTINGS=app.config.DevelopmentConfig
 
-flask:
-    host: 127.0.0.1
+For production mode:
+SHARK_APP_SETTINGS=app.config.ProductionConfig
+
+Use the following environment variables to override the defaults in app/config.py.
+
+Settings for this Flask app:
+* SHARK_HOST
+* SHARK_SECRET
+* SHARK_PORT
+
+Settings for the backend DB:
+* SHARK_DB_USER
+* SHARK_DB_PASS
+* SHARK_DB_ADDR
+* SHARK_DB_NAME
+
+
+## Basic Heroku Deployment
+
+### Local Database (not needed if connecting to a remote DB)
+Create a new postgres db:
+```bash
+heroku addons:create heroku-postgresql:hobby-dev
+```
+
+Initialize the local postgres DB on heroku:
+```bash
+heroku run python manage.py create_db
+heroku run python manage.py db migrate
+```
+
+Get info on the postgres DB:
+```bash
+heroku pg:info
+```
+
+### Helpful toolbelt commands for troubleshooting
+Tell heroku that you need to run 1 dyno:
+```bash
+heroku ps:scale web=1
+```
+
+See that the web app is running:
+```bash
+heroku ps
+```
+
+See environment variables:
+```bash
+heroku config
+```
+
+Tail the logs:
+```bash
+heroku logs --tail
 ```

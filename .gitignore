@@ -10,5 +10,3 @@ __pycahe__
 *.sqlite
 *.coverage
 .DS_Store
-env.sh
-migrations

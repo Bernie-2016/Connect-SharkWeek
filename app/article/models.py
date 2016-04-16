@@ -1,9 +1,8 @@
 from marshmallow_jsonapi import Schema, fields
-from marshmallow import validate
 from app.basemodels import db, CRUD_MixIn
 
 
-class Articles(db.Model, CRUD_MixIn):
+class Article(db.Model, CRUD_MixIn):
     id = db.Column(db.Integer, primary_key=True)
 
     status = db.Column(db.Integer, nullable=False)
@@ -38,25 +37,24 @@ class Articles(db.Model, CRUD_MixIn):
         self.body_markdown = body_markdown
 
 
-class ArticlesSchema(Schema):
+class ArticleSchema(Schema):
 
-    not_blank = validate.Length(min=1, error='Field cannot be blank')
-    # add validate=not_blank in required fields
     # id = fields.Integer(dump_only=True)
     id = fields.UUID(dump_only=True)
 
-    status = fields.Integer(required=True)
-    article_id = fields.String(validate=not_blank)
-    title = fields.String(validate=not_blank)
-    article_type = fields.String(validate=not_blank)
-    site = fields.String(validate=not_blank)
-    lang = fields.String(validate=not_blank)
-    excerpt = fields.String(validate=not_blank)
-    article_category = fields.String(validate=not_blank)
-    url = fields.String(validate=not_blank)
-    image_url = fields.String(validate=not_blank)
-    body = fields.String(validate=not_blank)
-    body_markdown = fields.String(validate=not_blank)
+    status = fields.Integer()
+    article_id = fields.String()
+    timestamp_publish = fields.DateTime("%Y-%m-%dT%H:%M:%S+00:00")
+    title = fields.String()
+    article_type = fields.String()
+    site = fields.String()
+    lang = fields.String()
+    excerpt = fields.String()
+    article_category = fields.String()
+    url = fields.String()
+    image_url = fields.String()
+    body = fields.String()
+    body_markdown = fields.String()
 
     # self links
     def get_top_level_links(self, data, many):
@@ -67,4 +65,4 @@ class ArticlesSchema(Schema):
         return {'self': self_link}
 
     class Meta:
-        type_ = 'articles'
+        type_ = 'article'

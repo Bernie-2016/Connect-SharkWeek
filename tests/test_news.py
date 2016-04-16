@@ -1,43 +1,39 @@
 import json
-from app.news.models import News
 
-data = """{
-  "data": {
-    "attributes":
-    {"lang": "foo",
-     "image_url": "http://www.example.com/image.png",
-     "url": "http://www.example.com",
-     "excerpt": "foo",
-     "news_category": "foo",
-     "news_id": "foo",
-     "status": 35678,
-     "title": "foo",
-     "body": "foo",
-     "site": "foo",
-     "news_type": "foo",
-     "body_markdown": "foo"} ,
-    "type": "news"
-  }
- }"""
+EXPECTED_KEYS = ['title', 'body_markdown', 'excerpt', 'timestamp_publish', 'url', 'image_url']
 
 
 class TestNews(object):
 
-    def test_01_create(self, client):
-        response = client.post('/api/v1/news.json', data=data, content_type="application/json")
-        assert response.status_code == 201
-
-    def test_02_read_update(self, client, news):
+    def test_get_news(self, client, news):
+        """Verify getting all news items. """
         news.add(news)
         request = client.get('/api/v1/news.json')
+        assert request.status_code == 200
         dict = json.loads(request.data.decode('utf-8'))
-        id = dict['data'][0]['id']
-        response = client.patch('/api/v1/news/{}.json'.format(id), data=data, content_type="application/json")
-        assert response.status_code == 200
+        data = dict.get('data')
+        assert len(data) == 1
+        news_item = data[0]
+        assert news_item.get('type') == 'news'
+        attributes = news_item.get('attributes')
+        assert attributes.get('title') == 'Get Connect Alerts on your iPhone with Movement App'
+        assert attributes.get('timestamp_publish') == '2016-01-10T00:00:00+00:00'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
 
-    def test_03_delete(self, client, news):
+    def test_get_single_news_item(self, client, news):
+        """Verify getting a news item by ID."""
         news.add(news)
-        newses = News.query.all()
-        id = newses[0].id
-        response = client.delete('/api/v1/news/{}.json'.format(id))
-        assert response.status_code == 204
+        request = client.get('/api/v1/news/1.json')
+        assert request.status_code == 200
+        dict = json.loads(request.data.decode('utf-8'))
+        news = dict.get('data')
+        assert news.get('type') == 'news'
+        attributes = news.get('attributes')
+        assert attributes.get('title') == 'Get Connect Alerts on your iPhone with Movement App'
+        assert list(attributes.keys()).sort() == EXPECTED_KEYS.sort()
+
+    def test_get_nonexistent_news_item(self, client, news):
+        """Verify trying to get a news item by ID that doesn't exist returns a 404."""
+        news.add(news)
+        request = client.get('/api/v1/news/99.json')
+        assert request.status_code == 404

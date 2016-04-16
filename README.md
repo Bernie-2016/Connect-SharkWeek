@@ -1,6 +1,7 @@
 # Connect-SharkWeek
-Public API for [Sharknado](https://github.com/Bernie-2016/Connect-Sharknado) using the [JSON API 1.0 Spec](http://jsonapi.org/)
-[Newsfeed spec](https://github.com/Bernie-2016/Connect-Sharknado/issues/1)
+Public API for [Sharknado](https://github.com/Bernie-2016/Connect-Sharknado) using the
+[JSON API 1.0 Spec](http://jsonapi.org/)
+[Newsfeed spec](https://github.com/Bernie-2016/Connect-SharkWeek/issues/3)
 
 ## Development
 Make sure you have the following installed:
@@ -9,7 +10,7 @@ Make sure you have the following installed:
 
 It's also recommended that you use
 [`virtualenv`](https://virtualenv.pypa.io/en/latest/),
-(`virtualenvwrapper`)[http://virtualenvwrapper.readthedocs.org], or a
+[`virtualenvwrapper`](http://virtualenvwrapper.readthedocs.org), or a
 similar tool to keep your development environment isolated from the
 rest of your system.
 
@@ -34,6 +35,11 @@ $ python manage.py create_db
 $ python manage.py db init
 $ python manage.py db migrate
 $ python manage.py create_data
+```
+
+To start the app in local development mode:
+```sh
+$ python ./runserver.py
 ```
 
 ## Production

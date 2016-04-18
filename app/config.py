@@ -5,6 +5,7 @@ SHARK_HOST = os.environ.get('SHARK_HOST', '0.0.0.0')
 SHARK_SECRET = os.environ.get('SHARK_SECRET', 'feel the bern')
 SHARK_PORT = os.environ.get('SHARK_PORT', '5000')
 
+
 # Settings for the backend DB
 SHARK_DB_USER = os.environ.get('SHARK_DB_USER', 'bernie')
 SHARK_DB_PASS = os.environ.get('SHARK_DB_PASS', 'sanders')

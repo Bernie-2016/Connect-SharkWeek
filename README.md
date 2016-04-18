@@ -58,6 +58,7 @@ Settings for this Flask app:
 * SHARK_HOST
 * SHARK_SECRET
 * SHARK_PORT
+* SHARK_NEWSFEED_LIMIT (default = 30)
 
 Settings for the backend DB:
 * SHARK_DB_USER

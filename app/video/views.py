@@ -10,19 +10,10 @@ schema = VideoSchema(
 api = Api(video)
 
 
-class GetVideos(Resource):
-    def get(self):
-        video_query = Video.query.all()
-        results = schema.dump(video_query, many=True).data
-        return results
-
-
 class GetVideo(Resource):
     def get(self, id):
         video_query = Video.query.get_or_404(id)
         result = schema.dump(video_query).data
         return result
 
-
-api.add_resource(GetVideos, '/api/v1/videos.json')
-api.add_resource(GetVideo, '/api/v1/videos/<int:id>.json')
+api.add_resource(GetVideo, '/videos/<int:id>')

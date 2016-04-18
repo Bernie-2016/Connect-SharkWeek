@@ -7,6 +7,8 @@ class Video(db.Model, CRUD_MixIn):
 
     status = db.Column(db.Integer, nullable=False)
     video_id = db.Column(db.Text, nullable=False)
+    timestamp_creation = db.Column(db.DateTime, nullable=False)
+    timestamp_publish = db.Column(db.DateTime, nullable=False)
     url = db.Column(db.Text, nullable=False)
     site = db.Column(db.Text, nullable=False)
     title = db.Column(db.Text, nullable=False)

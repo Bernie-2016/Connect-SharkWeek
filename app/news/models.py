@@ -7,6 +7,8 @@ class News(db.Model, CRUD_MixIn):
 
     status = db.Column(db.Integer, nullable=False)
     news_id = db.Column(db.Text, nullable=False)
+    timestamp_creation = db.Column(db.DateTime, nullable=False)
+    timestamp_publish = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.Text, nullable=False)
     news_type = db.Column(db.Text, nullable=False)
     site = db.Column(db.Text, nullable=False)

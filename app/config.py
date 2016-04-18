@@ -1,12 +1,23 @@
 import os
 
+# Settings for this Flask app
+SHARK_HOST = os.environ.get('SHARK_HOST', '0.0.0.0')
+SHARK_SECRET = os.environ.get('SHARK_SECRET', 'feel the bern')
+SHARK_PORT = os.environ.get('SHARK_PORT', '5000')
+
+# Settings for the backend DB
+SHARK_DB_USER = os.environ.get('SHARK_DB_USER', 'bernie')
+SHARK_DB_PASS = os.environ.get('SHARK_DB_PASS', 'sanders')
+SHARK_DB_ADDR = os.environ.get('SHARK_DB_ADDR', 'sharkweek')
+SHARK_DB_NAME = os.environ.get('SHARK_DB_NAME', 'localhost')
+
 
 class BaseConfig(object):
     """Base configuration."""
-    HOST = "0.0.0.0"
-    SECRET_KEY = 'feel the bern'
+    HOST = SHARK_HOST
+    SECRET_KEY = SHARK_SECRET
+    PORT = SHARK_PORT
     DEBUG = False
-    PORT = 5000
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -16,10 +27,14 @@ class BaseConfig(object):
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
     basedir = os.path.abspath(os.path.dirname(__file__))
-    DEBUG = True
-    HOST = "127.0.0.1"
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'dev.sqlite')
+    DEBUG = True
     DEBUG_TB_ENABLED = True
+
+
+class HerokuDevConfig(DevelopmentConfig):
+    """Deployment to heroku using local postgres instance."""
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
 
 class TestingConfig(BaseConfig):
@@ -33,8 +48,8 @@ class TestingConfig(BaseConfig):
 class ProductionConfig(BaseConfig):
     """Production configuration."""
     SQLALCHEMY_DATABASE_URI = "postgresql://{DB_USER}:{DB_PASS}@{DB_ADDR}/{DB_NAME}".format(
-        DB_USER='bernie',
-        DB_PASS='sanders',
-        DB_ADDR='sharkweek',
-        DB_NAME='localhost'
+        DB_USER=SHARK_DB_USER,
+        DB_PASS=SHARK_DB_PASS,
+        DB_ADDR=SHARK_DB_ADDR,
+        DB_NAME=SHARK_DB_NAME
     )

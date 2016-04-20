@@ -3,7 +3,7 @@ from app.basemodels import db, CRUD_MixIn
 
 
 class Video(db.Model, CRUD_MixIn):
-    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     status = db.Column(db.Integer, nullable=False)
     video_id = db.Column(db.Text, nullable=False)
@@ -33,8 +33,7 @@ class Video(db.Model, CRUD_MixIn):
 
 class VideoSchema(Schema):
 
-    # id = fields.Integer(dump_only=True)
-    id = fields.UUID(dump_only=True)
+    id = fields.UUID(dump_only=True, attribute='uuid')
 
     status = fields.Integer(required=True)
     video_id = fields.String()

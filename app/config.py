@@ -4,7 +4,7 @@ import os
 SHARK_HOST = os.environ.get('SHARK_HOST', '0.0.0.0')
 SHARK_SECRET = os.environ.get('SHARK_SECRET', 'feel the bern')
 SHARK_PORT = os.environ.get('SHARK_PORT', '5000')
-
+SHARK_LOGGING_LEVEL = os.environ.get('SHARK_LOGGING_LEVEL', 'info')
 
 # Settings for the backend DB
 SHARK_DB_USER = os.environ.get('SHARK_DB_USER', 'bernie')
@@ -23,6 +23,7 @@ class BaseConfig(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = True
+    LOGGING_LEVEL = SHARK_LOGGING_LEVEL
 
 
 class DevelopmentConfig(BaseConfig):

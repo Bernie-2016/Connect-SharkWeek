@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, make_response
+import logging
 import os
 
 from .basemodels import db
@@ -14,8 +15,15 @@ from app.video.views import video
 from app.video.views import schema as video_schema
 
 
-from logging import getLogger
-LOGGER = getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
+
+LOG_LEVEL = {
+    'debug': logging.DEBUG,
+    'info': logging.INFO,
+    'warning': logging.WARNING,
+    'error': logging.ERROR,
+    'critical': logging.CRITICAL
+}
 
 # Limit for the total number of items returned.
 SHARK_NEWSFEED_LIMIT = int(os.environ.get('SHARK_NEWSFEED_LIMIT', '30'))
@@ -25,6 +33,10 @@ def create_app(config_object=ProductionConfig):
     app = Flask(__name__)
     app.config.from_object(config_object)
 
+    logging.basicConfig(
+        level=LOG_LEVEL.get(app.config['LOGGING_LEVEL'].lower()),
+        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    )
     LOGGER.info('Starting up the application.')
 
     # DB setup
@@ -65,6 +77,17 @@ def create_app(config_object=ProductionConfig):
 
     @app.errorhandler(404)
     def not_found(error):
+        LOGGER.error('Page not found. {}'.format(error))
         return make_response(jsonify({'error': 'Not found'}), 404)
+
+    @app.errorhandler(500)
+    def internal_server_error(error):
+        LOGGER.error('Server Error. {}'.format(error))
+        return make_response(jsonify({'error': 'Server Error'}), 500)
+
+    @app.errorhandler(Exception)
+    def unhandled_exception(e):
+        LOGGER.error('Unhandled Exception. {}'.format(e))
+        return make_response(jsonify({'error': 'Unhandled Exception'}), 500)
 
     return app

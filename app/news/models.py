@@ -3,10 +3,12 @@ from app.basemodels import db, CRUD_MixIn
 
 
 class News(db.Model, CRUD_MixIn):
-    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.Integer, primary_key=True)
 
     status = db.Column(db.Integer, nullable=False)
     news_id = db.Column(db.Text, nullable=False)
+    timestamp_creation = db.Column(db.DateTime, nullable=False)
+    timestamp_publish = db.Column(db.DateTime, nullable=False)
     title = db.Column(db.Text, nullable=False)
     news_type = db.Column(db.Text, nullable=False)
     site = db.Column(db.Text, nullable=False)
@@ -39,8 +41,7 @@ class News(db.Model, CRUD_MixIn):
 
 class NewsSchema(Schema):
 
-    # id = fields.Integer(dump_only=True)
-    id = fields.UUID(dump_only=True)
+    id = fields.UUID(dump_only=True, attribute='uuid')
 
     status = fields.Integer()
     news_id = fields.String()

@@ -29,12 +29,12 @@ Run tests:
 make test
 ```
 
-To set up the DB for local development:
+Here are the commands for setting up the DB:
 ```sh
 $ python manage.py create_db
 $ python manage.py db init
 $ python manage.py db migrate
-$ python manage.py create_data
+$ python manage.py db upgrade
 ```
 
 To start the app in local development mode:
@@ -58,6 +58,8 @@ Settings for this Flask app:
 * SHARK_HOST
 * SHARK_SECRET
 * SHARK_PORT
+* SHARK_NEWSFEED_LIMIT (default = 30)
+* SHARK_LOGGING_LEVEL (default = info)
 
 Settings for the backend DB:
 * SHARK_DB_USER
